@@ -1,0 +1,21 @@
+<? INC Header.tmpl ?>
+
+<form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>">
+	<? INC _csrf_check.tmpl ?>
+	<div class="section">
+		<h3>Server notice definitions</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection full">
+					<span class="info">Snomask letter followed by a space, and a pattern. Patterns can include *, \* and \\. Comments beginning with # are allowed.</span><br />
+					<textarea name="definitions" class="monospace" cols="70" rows="20" style="height: initial;"><? VAR definitions ?></textarea>
+				</div>
+				<div class="subsection submitline">
+					<input type="submit" name="save" value="Save" />
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<? INC Footer.tmpl ?>

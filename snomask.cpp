@@ -56,7 +56,7 @@ private:
 		"f \\*\\*\\* Notice -- Too many local connections for *!*@*\n"
 		"f \\*\\*\\* Notice -- Too many global connections for *!*@*\n"
 		"f \\*\\*\\* Notice -- Too many user connections for *!*@*\n"
-		"f \\*\\*\\* Notice -- I-line is ful for *!*@* (*)\n"
+		"f \\*\\*\\* Notice -- I-line is full for *!*@* (*)\n"
 		"k \\*\\*\\* Notice -- Received KILL message for *!*@*. From * Path: *!*!*!* *\n"
 		"k \\*\\*\\* Notice -- Received KILL message for *!*@*. From * *\n"
 		"k \\*\\*\\* Notice -- Ignored SAVE message for * from *\n"
@@ -406,9 +406,16 @@ public:
 		return CONTINUE;
 	}
 
-	EModRet OnStatusCommand(CString& sCommand) override
+	CString GetWebMenuTitle() override { return "Snomask"; }
+
+	bool OnWebRequest(CWebSock &sock, CString const &pageName, CTemplate &tmpl) override
 	{
-		return CONTINUE;
+		if(pageName != "index")
+			return false;
+		if(sock.IsPost())
+			SetNV("definitions", sock.GetRawParam("definitions", true));
+		tmpl["definitions"] = GetDefinitions();
+		return true;
 	}
 };
 
