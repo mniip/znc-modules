@@ -29,6 +29,7 @@ class CSnomaskModule: public CModule
 {
 private:
 	CString DefaultSnoticeDefs =
+		"# Charybdis server notices: (except +s)\n"
 		"C \\*\\*\\* Notice -- CLICONN * * * * * * 0 *\n"
 		"C \\*\\*\\* Notice -- CLIEXIT * * * * * *\n"
 		"Z \\*\\*\\* Notice -- OPERSPY * * *\n"
@@ -271,7 +272,7 @@ private:
 		table.AddColumn("Client");
 		table.AddColumn("Snomask");
 		for(MCString::iterator it = BeginNV(); it != EndNV(); it++)
-			if(it->first.find("mask_") == 0)
+			if(it->first.StartsWith("mask_"))
 			{
 				table.AddRow();
 				CString const identifier = it->first.substr(CString("mask_").size());
@@ -410,12 +411,75 @@ public:
 
 	bool OnWebRequest(CWebSock &sock, CString const &pageName, CTemplate &tmpl) override
 	{
-		if(pageName != "index")
-			return false;
-		if(sock.IsPost())
-			SetNV("definitions", sock.GetRawParam("definitions", true));
-		tmpl["definitions"] = GetDefinitions();
-		return true;
+		if(pageName == "index")
+		{
+			if(sock.IsPost())
+				SetNV("definitions", sock.GetRawParam("definitions", true));
+
+			tmpl["definitions"] = GetDefinitions();
+			for(MCString::iterator it = BeginNV(); it != EndNV(); it++)
+				if(it->first.StartsWith("mask_"))
+				{
+					CTemplate &row = tmpl.AddRow("ClientLoop");
+					row["Client"] = it->first.substr(CString("mask_").size());
+					row["Snomask"] = "+" + it->second;
+				}
+			return true;
+		}
+		else if(pageName == "defaultdefs")
+		{
+			SetNV("definitions", DefaultSnoticeDefs);
+			sock.Redirect(GetWebPath());
+			return true;
+		}
+		else if(pageName == "addclient")
+		{
+			if(sock.IsPost())
+			{
+				CString const &identifier = sock.GetParam("client").Token(0);
+				if(!identifier.size())
+				{
+					sock.PrintErrorPage("Client identifier can't be empty");
+					return true;
+				}
+				SetClientSnomask(identifier, MergeMask("", sock.GetParam("snomask")));
+				sock.Redirect(GetWebPath());
+			}
+			return true;
+		}
+		else if(pageName == "editclient")
+		{
+			if(sock.IsPost())
+			{
+				CString const &identifier = sock.GetParam("client");
+				if(!HaveClient(identifier))
+				{
+					sock.PrintErrorPage("No such client identifier: '" + identifier + "'");
+					return true;
+				}
+				SetClientSnomask(identifier, MergeMask("", sock.GetParam("snomask")));
+				sock.Redirect(GetWebPath());
+			}
+			else
+			{
+				CString const &identifier = sock.GetParam("client", false);
+				if(!HaveClient(identifier))
+				{
+					sock.PrintErrorPage("No such client identifier");
+					return true;
+				}
+				tmpl["client"] = identifier;
+				tmpl["snomask"] = GetClientSnomask(identifier);
+			}
+			return true;
+		}
+		else if(pageName == "delclient")
+		{
+			DeleteClient(sock.GetParam("client", false));
+			sock.Redirect(GetWebPath());
+			return true;
+		}
+		return false;
 	}
 };
 

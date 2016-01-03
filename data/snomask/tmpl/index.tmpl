@@ -1,21 +1,49 @@
-<? INC Header.tmpl ?>
+<?INC Header.tmpl?>
 
-<form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>">
-	<? INC _csrf_check.tmpl ?>
-	<div class="section">
-		<h3>Server notice definitions</h3>
-		<div class="sectionbg">
-			<div class="sectionbody">
+<div class="section">
+	<h3>Client identifiers</h3>
+	<div class="sectionbg">
+		<div class="sectionbody">
+			<div class="toptable">
+				<table>
+					<thead>
+						<tr>
+							<td>[<a href="<?VAR URIPrefix TOP?><?VAR ModPath?>addclient">Add</a>]</td>
+							<td>Identifier</td>
+							<td>Snomask</td>
+						</tr>
+					</thead>
+					<tbody>
+						<?LOOP ClientLoop SORTASC=Client ?>
+							<tr class="<?IF __EVEN__?>evenrow<?ELSE?>oddrow<?ENDIF?>">
+								<td><span class="nowrap">[<a href="<?VAR URIPrefix TOP?><?VAR ModPath?>editclient?client=<?VAR Client ESC=URL?>">Edit</a>] [<a href="<?VAR URIPrefix TOP?><?VAR ModPath?>delclient?client=<?VAR Client ESC=URL?>">Delete</a>]</span></td>
+								<td><?VAR Client?></td>
+								<td><?VAR Snomask?></td>
+							</tr>
+						<?ENDLOOP?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="section">
+	<h3>Server notice definitions</h3>
+	<div class="sectionbg">
+		<div class="sectionbody">
+		<form method="post" action="<?VAR URIPrefix TOP?><?VAR ModPath?>">
+			<? INC _csrf_check.tmpl ?>
 				<div class="subsection full">
-					<span class="info">Snomask letter followed by a space, and a pattern. Patterns can include *, \* and \\. Comments beginning with # are allowed.</span><br />
-					<textarea name="definitions" class="monospace" cols="70" rows="20" style="height: initial;"><? VAR definitions ?></textarea>
+					<span class="info">Snomask letter followed by a space, and a pattern. Patterns can include *, \* and \\. Comments beginning with # are allowed. Click <a href="<?VAR URIPrefix TOP?><?VAR ModPath?>defaultdefs">here</a> to restore defaults.</span><br />
+					<textarea name="definitions" class="monospace" rows="15" style="height: initial; width: 100%;"><? VAR definitions ?></textarea>
 				</div>
 				<div class="subsection submitline">
 					<input type="submit" name="save" value="Save" />
 				</div>
 			</div>
-		</div>
+		</form>
 	</div>
-</form>
+</div>
 
-<? INC Footer.tmpl ?>
+<?INC Footer.tmpl?>
