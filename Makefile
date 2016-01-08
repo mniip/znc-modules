@@ -4,6 +4,6 @@ MODULES= $(patsubst %/,%,$(wildcard */))
 all: $(MODULES)
 
 $(MODULES):
-	cp -r $@/* $(TARGET)/modules/
+	for file in $@/*; do [ "$${f##*.}" = md ] && continue; cp -r "$$file" $(TARGET)/modules/; done
 
 .PHONY: all $(MODULES)
