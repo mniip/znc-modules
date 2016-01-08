@@ -1,4 +1,4 @@
-# Snomask
+# [Snomask](http://wiki.znc.in/Snomask)
 
 Snomask is a ZNC module that filters server notices based on the client identifier. One can configure what patterns correspond to what snomask letters, and then configure snomasks per client identifiers.
 Use `AddClient` and `DelClient` to add and remove a client identifier. `ListClients` lists client identifiers and their respective snomasks. `Snomask +-<snomasks>` adds or removes letters from the snomask.
