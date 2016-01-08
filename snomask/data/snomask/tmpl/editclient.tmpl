@@ -1,0 +1,26 @@
+<?INC Header.tmpl?>
+
+<form action="<?VAR URIPrefix TOP?><?VAR ModPath TOP?>editclient" method="post">
+	<?INC _csrf_check.tmpl?>
+	<input type="hidden" name="client" value="<?VAR client?>" />
+	<div class="section">
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection half">
+					<div class="inputlabel">Client identifier:</div>
+					<input type="text" disabled value="<?VAR client?>" />
+				</div>
+				<div class="subsection half">
+					<div class="inputlabel">Snomask:</div>
+					<input type="text" name="snomask" value="<?VAR snomask?>" title="The server notice mask" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="submitline">
+		<input type="submit" value="Edit Client" />
+	</div>
+</form>
+
+<?INC Footer.tmpl?>
